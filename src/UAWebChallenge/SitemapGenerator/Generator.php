@@ -12,6 +12,7 @@ class Generator
 {
 	const SCHEME = 'http://www.sitemaps.org/schemas/sitemap/0.9';
 	const XML_FILE = 'sitemap.xml';
+	const PARSE_LEVEL = 3;
 
 	/** @var string $siteUrl */
 	private $siteUrl;
@@ -54,12 +55,38 @@ class Generator
     	return $url;
     }
 
+    /**
+     * Parse input site url
+     *
+     * @param Parser $parser
+     * @param int $level
+     * @return array $links
+     */
+    public function parseSite(Parser $parser, $level = self::PARSE_LEVEL)
+    {
+    	$parser->parseFromUrl($this->$siteUrl);
+    	$links = $parser->getLinks($level);
+
+    	return $links;
+    }
+
 	/**
 	 * Generate a XML file
 	 * 
 	 */
 	public function generateXmlFile() 
 	{
-		
+		$links = $this->parseSite(new Parser());
+		$this->saveXmlFile();
+	}
+
+	/**
+	 * Save XML file on drive
+	 *
+	 * @param string $fileName
+	 */
+	private function saveXmlFile($fileName = self::XML_FILE)
+	{
+
 	}
 }
