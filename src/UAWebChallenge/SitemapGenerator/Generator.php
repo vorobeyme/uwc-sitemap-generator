@@ -3,6 +3,7 @@
 namespace UAWebChallenge\SitemapGenerator;
 
 use UAWebChallenge\SitemapGenerator\Parser;
+use UAWebChallenge\SitemapGenerator\Validator;
 
 /**
  * Sitemap generator
@@ -15,12 +16,10 @@ class Generator
 	const PARSE_LEVEL = 3;
 
 	/** @var string $siteUrl */
-	private $siteUrl;
+	private $siteUrl;	
 
-	public $loc;
-	public $lastmod;
-	public $changefreq;
-	public $priority;
+	/** @var Parser $parser */
+	private $parser;	
 
 	/**
 	 * Constructor
@@ -30,6 +29,7 @@ class Generator
 	public function __construct($url) 
 	{
 		$this->setSiteUrl($url);
+		$this->parser = new Parser($this->siteUrl);
 	}
 
 	/**
@@ -39,8 +39,17 @@ class Generator
 	 */
 	public function setSiteUrl($url) 
 	{
-		$url = $this->prepareUrl($url);
-		$this->siteUrl = $url;
+		$this->siteUrl = $this->prepareUrl($url);
+	}
+
+	/**
+	 * Get site url address
+	 *
+	 * @return string
+	 */
+	public function getSiteUrl()
+	{
+		return $this->siteUrl;
 	}
 
 	/**
@@ -52,7 +61,7 @@ class Generator
     public function prepareUrl($url)
     {
     	// TODO
-    	return $url;
+    	return Validator::prepareSiteUrl($url);
     }
 
     /**
@@ -62,11 +71,10 @@ class Generator
      * @param int $level
      * @return array $links
      */
-    public function parseSite(Parser $parser, $level = self::PARSE_LEVEL)
-    {
-    	$parser->parseFromUrl($this->$siteUrl);
-    	$links = $parser->getLinks($level);
-
+    public function parseSite($level = self::PARSE_LEVEL)
+    {    	
+    	$links = $this->parser->getParsedLinks();
+    	
     	return $links;
     }
 
@@ -76,8 +84,10 @@ class Generator
 	 */
 	public function generateXmlFile() 
 	{
-		$links = $this->parseSite(new Parser());
+		$links = $this->parseSite();
 		$this->saveXmlFile();
+
+		return $this->siteUrl;
 	}
 
 	/**
@@ -88,5 +98,26 @@ class Generator
 	private function saveXmlFile($fileName = self::XML_FILE)
 	{
 
+	}
+
+	/**
+	 * Check if sitemap is generated
+	 *
+	 * @return bool
+	 */
+	public function isGenerated()
+	{
+		
+	}
+
+	/**
+	 * Get link to download a generated sitemap
+	 *
+	 * @param bool $zip
+	 * @return string
+	 */
+	public function getDownloadLink($zip = true)
+	{
+		
 	}
 }
